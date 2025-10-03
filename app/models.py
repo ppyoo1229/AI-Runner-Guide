@@ -16,9 +16,11 @@ class ParsedParams(BaseModel):
     location: Optional[str] = None
     distance_km: Optional[float] = None
     time: Optional[str] = None
+    keywords: Optional[List[str]] = None 
 
 class FindCourseRequest(BaseModel):
-    params: ParsedParams
+    params: Optional[ParsedParams] = None
+    text: Optional[str] = None  # 자연어 쿼리 (params 대신 사용 가능)
 
 class RouteItem(BaseModel):
     route_id: str

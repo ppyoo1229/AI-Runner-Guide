@@ -1,7 +1,7 @@
 # app/geo.py
 # 지오코딩 히트 수 로그
 import httpx, os, logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from app.models import LatLng
 
 log = logging.getLogger("geo")

@@ -29,7 +29,15 @@ async def parse(req: ParseRequest):
 
 @app.post("/find_course", response_model=FindCourseResponse)
 async def find_course(req: FindCourseRequest):
-    p = req.params
+    # 자연어 쿼리가 있으면 먼저 파싱
+    if req.text:
+        log.info(f"[find_course] parsing text: {req.text}")
+        p = parse_running_query(req.text)
+    elif req.params:
+        p = req.params
+    else:
+        raise HTTPException(400, "Either 'text' or 'params' is required")
+
     if not p.location:
         raise HTTPException(400, "location is required")
 
