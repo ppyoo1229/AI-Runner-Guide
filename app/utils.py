@@ -63,9 +63,6 @@ def estimate_features(length_m: float, is_night: bool = False) -> Dict:
 
 
 def badges_from_features(f: Dict) -> list[str]:
-    """
-    간단 배지 생성 규칙
-    """
     badges = []
     if f.get("lighting_index", 0.0) >= 0.6:
         badges.append("조명좋음")
@@ -74,7 +71,6 @@ def badges_from_features(f: Dict) -> list[str]:
     if f.get("elev_gain_norm", 1.0) <= 0.2:
         badges.append("평탄")
     return badges or ["기본"]
-
 
 # =========================
 # 가로등 CSV 로딩 & 조명지수
@@ -128,7 +124,7 @@ def load_lamps_csv(
     """
     global _LAMPS_GDF
     if not os.path.exists(path):
-        # 파일이 없으면 조용히 패스 (야간 지수는 기본값으로 동작)
+        # 파일이 없으면 패스 (야간 지수는 기본값으로 동작)
         _LAMPS_GDF = None
         return
 
