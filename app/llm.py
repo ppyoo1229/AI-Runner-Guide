@@ -99,16 +99,32 @@ def _normalize_keywords(arr) -> List[str]:
     return picked[:7]
 
 def parse_running_query(text: str) -> ParsedParams:
+    """
+    자연어 쿼리를 ParsedParams로 변환
+    - LLM 서버가 있으면 사용
+    - 없으면 규칙 기반 fallback 사용
+    """
     prompt = f"{INSTRUCTIONS}\n\n사용자:\n{text}\n\nJSON:"
-    out = _post_tgi({
-        "model": MODEL_ID,
-        "inputs": prompt,
-        "parameters": {
-            "temperature": 0.1,          # 파싱은 낮은 온도로 안정화
-            "max_new_tokens": 256,
-            "stop": ["\n\n", "\n}"],     # JSON 조기 종료 유도
-        },
-    })
+    try:
+        out = _post_tgi({
+            "model": MODEL_ID,
+            "inputs": prompt,
+            "parameters": {
+                "temperature": 0.1,          # 파싱은 낮은 온도로 안정화
+                "max_new_tokens": 256,
+                "stop": ["\n\n", "\n}"],     # JSON 조기 종료 유도
+            },
+        })
+    except Exception as e:
+        # LLM 서버 연결 실패 시 규칙 기반 fallback
+        import logging
+        logging.getLogger("llm").debug(f"LLM fallback (서버 연결 실패): {e}")
+        return ParsedParams(
+            location=None,
+            distance_km=_to_km_from_text(text),
+            time=_infer_time(text),
+            keywords=_fallback_keywords(text),
+        )
 
     # JSON 안전 파싱
     jtxt = out.strip()
