@@ -20,7 +20,7 @@ class ParsedParams(BaseModel):
 
 class FindCourseRequest(BaseModel):
     params: Optional[ParsedParams] = None
-    text: Optional[str] = None  # 자연어 쿼리 (params 대신 사용 가능)
+    text: Optional[str] = None  # 자연어 쿼리 (params 대신 사용)
 
 class RouteItem(BaseModel):
     route_id: str
